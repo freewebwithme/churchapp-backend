@@ -1,0 +1,17 @@
+{
+  "church-info" : {
+    "name": "Taehwan",
+    "age": 32,
+    "sex": "male"
+  },
+  "pastor" : {
+    "name" : "Jung O Kim",
+    "title" : "Senior Pastor"
+  }
+}
+
+
+// {:ok, data} = File.read("info.json")
+// {:ok, result} = Jason.decode(data)
+// get_in(result, ["pastor", "name"])
+// "Jung O Kim"
