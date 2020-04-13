@@ -11,6 +11,24 @@ defmodule ChurchWeb.Schema.Schema do
       arg(:next_page_token, :string)
       resolve(&Resolvers.YoutubeResolver.search_videos/3)
     end
+
+    @doc "Get most recent videos"
+    field :most_recent, list_of(:latest_videos) do
+      arg(:count, non_null(:integer))
+      resolve(&Resolvers.YoutubeResolver.get_most_recent_videos/3)
+    end
+
+    @doc "Get all playlists"
+    field :playlists, list_of(:playlist) do
+      resolve(&Resolvers.YoutubeResolver.get_all_playlists/3)
+    end
+
+    @doc "Get all playlist items"
+    field :playlist_items, :video_search_response do
+      arg(:next_page_token, :string)
+      arg(:playlist_id, :string)
+      resolve(&Resolvers.YoutubeResolver.get_playlist_items/3)
+    end
   end
 
   object :video_search_response do
@@ -34,5 +52,23 @@ defmodule ChurchWeb.Schema.Schema do
     field(:published_at, :string)
     field(:title, :string)
     field(:thumbnail_url, :string)
+  end
+
+  object :latest_videos do
+    field :id, :id
+    field :title, :string
+    field :description, :string
+    field :video_id, :string
+    field :thumbnail_url, :string
+    field :published_at, :string
+    field :channel_title, :string
+  end
+
+  object :playlist do
+    field :id, :id
+    field :playlist_id, :string
+    field :playlist_title, :string
+    field :description, :string
+    field :thumbnail_url, :string
   end
 end

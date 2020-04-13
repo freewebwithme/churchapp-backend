@@ -23,11 +23,18 @@ defmodule Church.Youtube do
     end
   end
 
-  def list_playlist_items(part, playlist_id, max_results) do
+  def list_playlist_items(part, playlist_id, max_results, next_page_token) do
     {api_key, _channel_id, connection} = initialize_connection()
 
     with {:ok, %{items: playlist_items, nextPageToken: next_page_token, pageInfo: page_info}} <-
-           YoutubeApi.get_playlist_items(connection, part, api_key, playlist_id, max_results) do
+           YoutubeApi.get_playlist_items(
+             connection,
+             part,
+             api_key,
+             playlist_id,
+             max_results,
+             next_page_token
+           ) do
       %{items: playlist_items, next_page_token: next_page_token, page_info: page_info}
     else
       {:error, info} -> {:error, info}

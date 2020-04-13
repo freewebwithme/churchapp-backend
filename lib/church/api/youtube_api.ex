@@ -31,11 +31,19 @@ defmodule Church.Api.YoutubeApi do
   @spec get_playlist_items(%Tesla.Client{}, String.to(), String.t(), String.t(), integer) ::
           %GoogleApi.YouTube.V3.Model.PlaylistItemListResponse{}
 
-  def get_playlist_items(connection, part \\ "snippet", api_key, playlist_id, max_results \\ 25) do
+  def get_playlist_items(
+        connection,
+        part \\ "snippet",
+        api_key,
+        playlist_id,
+        max_results \\ 25,
+        next_page_token \\ ""
+      ) do
     PlaylistItems.youtube_playlist_items_list(connection, part,
       key: api_key,
       playlistId: playlist_id,
-      maxResults: max_results
+      maxResults: max_results,
+      pageToken: next_page_token
     )
   end
 

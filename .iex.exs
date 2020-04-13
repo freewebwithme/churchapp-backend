@@ -47,8 +47,9 @@ alias GoogleApi.YouTube.V3.Api
 alias GoogleApi.YouTube.V3.Connection
 alias Church.Api.YoutubeApi
 alias Church.Youtube
+alias Church.Videos.LatestVideos
+alias Church.Videos
 
 
-api_key ="AIzaSyAvxZuv-L6JsA3fkXTPgb7hfF0LxHK1-e8"
 channel_id = "UC-R1QgG_g_hRrTsNxqyW1aw"
 playlist_id = "PLdRZTYVWsX1jNZwuxNsENC6-J8kQv0sAy"
