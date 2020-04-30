@@ -9,18 +9,18 @@ defmodule Church.Videos do
   alias Church.Youtube
   alias Church.Response.Playlist
   alias Church.Utility
+  alias Church.Accounts
 
-  alias Timex.Format.DateTime.Formatter
   alias UUID
 
-  def list_latest_videos() do
-    Repo.all(LatestVideos)
+  def list_latest_videos(church_id) do
+    church = Accounts.get_church_by_id(church_id)
+    church.latest_videos
   end
 
   @doc """
   Insert all 25 videos at once using insert_all
   """
-  @spec insert_all_latest_videos(videos :: list) :: {integer(), nil | [term()]}
   def insert_all_latest_videos(videos) do
     Repo.insert_all(LatestVideos, videos, on_conflict: :nothing, returning: true)
   end
@@ -32,7 +32,9 @@ defmodule Church.Videos do
   @doc """
   buid list of maps for insert_all_latest_videos
   """
-  def build_videos_from_response(response) do
+  def build_videos_from_response(response, church_id) do
+    church_id = String.to_integer(church_id)
+
     %{
       etag: _etag,
       nextPageToken: _next_page_token,
@@ -53,7 +55,8 @@ defmodule Church.Videos do
         thumbnail_url: Utility.get_thumbnail_url(video),
         published_at: formatted_datetime,
         inserted_at: timestamp,
-        updated_at: timestamp
+        updated_at: timestamp,
+        church_id: church_id
       }
     end)
   end
@@ -65,15 +68,17 @@ defmodule Church.Videos do
   And save the result.
   If has videos, return them
   """
-  def get_most_recent_videos() do
-    latest_videos = list_latest_videos()
+  def get_most_recent_videos(church_id, channel_id) do
+    latest_videos = list_latest_videos(church_id)
 
     with true <- Enum.empty?(latest_videos) do
       # There is no latest videos in database
       # Call API and save them to database
-      {:ok, response} = Youtube.search_videos("snippet", "", "date", 25, "")
+      {:ok, response} = Youtube.search_videos(channel_id, "snippet", "", "date", 25, "")
 
-      {_rows, videos} = build_videos_from_response(response) |> insert_all_latest_videos
+      {_rows, videos} =
+        build_videos_from_response(response, church_id) |> insert_all_latest_videos
+
       videos
     else
       false -> latest_videos
@@ -92,12 +97,9 @@ defmodule Church.Videos do
     end)
   end
 
-  def build_playlist_items(items, next_page_token) do
-  end
-
-  def get_all_playlists() do
+  def get_all_playlists(channel_id) do
     %{items: playlists, next_page_token: _token, page_info: _info} =
-      Youtube.list_playlists_info("snippet", 25)
+      Youtube.list_playlists_info(channel_id, "snippet", 25)
 
     build_playlists(playlists)
   end

@@ -9,6 +9,7 @@ defmodule ChurchWeb.Resolvers.YoutubeResolver do
   def search_videos(
         _,
         %{
+          channel_id: channel_id,
           query: query,
           order: order,
           max_results: max_results,
@@ -19,7 +20,7 @@ defmodule ChurchWeb.Resolvers.YoutubeResolver do
     part = "snippet"
 
     {:ok, video_search_list_response} =
-      Youtube.search_videos(part, query, order, max_results, next_page_token_request)
+      Youtube.search_videos(channel_id, part, query, order, max_results, next_page_token_request)
 
     %{
       etag: etag,
@@ -61,13 +62,13 @@ defmodule ChurchWeb.Resolvers.YoutubeResolver do
     {:ok, new_video_search_response}
   end
 
-  def get_most_recent_videos(_, %{count: count}, _) do
-    videos = Videos.get_most_recent_videos() |> Enum.take(count)
+  def get_most_recent_videos(_, %{count: count, church_id: church_id, channel_id: channel_id}, _) do
+    videos = Videos.get_most_recent_videos(church_id, channel_id) |> Enum.take(count)
     {:ok, videos}
   end
 
-  def get_all_playlists(_, _, _) do
-    playlists = Videos.get_all_playlists()
+  def get_all_playlists(_, %{channel_id: channel_id}, _) do
+    playlists = Videos.get_all_playlists(channel_id)
     {:ok, playlists}
   end
 

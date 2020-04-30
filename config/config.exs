@@ -20,6 +20,11 @@ config :church, ChurchWeb.Endpoint,
   pubsub: [name: Church.PubSub, adapter: Phoenix.PubSub.PG2],
   live_view: [signing_salt: System.get_env("LIVE_VIEW_SIGNING_SALT")]
 
+config :ex_aws,
+  access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
+  secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role],
+  region: {:system, "AWS_REGION"}
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

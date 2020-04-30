@@ -34,6 +34,7 @@ defmodule Church.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.4.16"},
+      {:phoenix_html, "~> 2.14"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:ecto_sql, "~> 3.1"},
@@ -46,7 +47,16 @@ defmodule Church.MixProject do
       {:absinthe_phoenix, "~> 1.4"},
       {:google_api_you_tube, "~> 0.16.0"},
       {:uuid, "~> 1.1"},
-      {:timex, "~>3.6"}
+      {:timex, "~>3.6"},
+      {:comeonin_ecto_password, "~> 3.0.0"},
+      {:pbkdf2_elixir, "~> 1.0"},
+      {:email_checker, "~> 0.1.3"},
+      {:plug, "~> 1.0"},
+      {:cors_plug, "~> 2.0"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~>2.0"},
+      {:hackney, "~> 1.9"},
+      {:sweet_xml, "~>0.6"}
     ]
   end
 

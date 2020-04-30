@@ -43,13 +43,15 @@ IEx.configure(
     |> IO.chardata_to_string()
 )
 
+alias Church.Repo
 alias GoogleApi.YouTube.V3.Api
 alias GoogleApi.YouTube.V3.Connection
 alias Church.Api.YoutubeApi
 alias Church.Youtube
 alias Church.Videos.LatestVideos
-alias Church.Videos
-
+alias Church.{Videos, Accounts}
+alias Church.Accounts.{User}
+alias Church.Utility
 
 channel_id = "UC-R1QgG_g_hRrTsNxqyW1aw"
 playlist_id = "PLdRZTYVWsX1jNZwuxNsENC6-J8kQv0sAy"

@@ -7,9 +7,6 @@ defmodule Church.Api.YoutubeApi do
   Returns a {:ok, %GoogleApi.YouTube.V3.Model.PlaylistListResponse{}}
   """
 
-  @spec get_playlists(%Tesla.Client{}, String.t(), String.t(), String.t()) ::
-          %GoogleApi.YouTube.V3.Model.PlaylistListResponse{}
-
   def get_playlists(
         %Tesla.Client{} = connection,
         part \\ "snippet",
@@ -28,8 +25,6 @@ defmodule Church.Api.YoutubeApi do
   Get playlist items in specified playlist.
   Returns a {:ok, %GoogleApi.YouTube.V3.Model.PlaylistItemListResponse{}}
   """
-  @spec get_playlist_items(%Tesla.Client{}, String.to(), String.t(), String.t(), integer) ::
-          %GoogleApi.YouTube.V3.Model.PlaylistItemListResponse{}
 
   def get_playlist_items(
         connection,
