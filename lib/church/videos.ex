@@ -33,7 +33,14 @@ defmodule Church.Videos do
   buid list of maps for insert_all_latest_videos
   """
   def build_videos_from_response(response, church_id) do
-    church_id = String.to_integer(church_id)
+    church_id =
+      case is_binary(church_id) do
+        true ->
+          String.to_integer(church_id)
+
+        _ ->
+          church_id
+      end
 
     %{
       etag: _etag,
@@ -68,20 +75,18 @@ defmodule Church.Videos do
   And save the result.
   If has videos, return them
   """
-  def get_most_recent_videos(church_id, channel_id) do
-    latest_videos = list_latest_videos(church_id)
-
-    with true <- Enum.empty?(latest_videos) do
+  def get_most_recent_videos(church) do
+    with true <- Enum.empty?(church.latest_videos) do
       # There is no latest videos in database
       # Call API and save them to database
-      {:ok, response} = Youtube.search_videos(channel_id, "snippet", "", "date", 25, "")
+      {:ok, response} = Youtube.search_videos(church.channel_id, "snippet", "", "date", 25, "")
 
       {_rows, videos} =
-        build_videos_from_response(response, church_id) |> insert_all_latest_videos
+        build_videos_from_response(response, church.id) |> insert_all_latest_videos
 
       videos
     else
-      false -> latest_videos
+      false -> church.latest_videos
     end
   end
 

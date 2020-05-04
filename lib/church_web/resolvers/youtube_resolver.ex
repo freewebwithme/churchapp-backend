@@ -62,10 +62,10 @@ defmodule ChurchWeb.Resolvers.YoutubeResolver do
     {:ok, new_video_search_response}
   end
 
-  def get_most_recent_videos(_, %{count: count, church_id: church_id, channel_id: channel_id}, _) do
-    videos = Videos.get_most_recent_videos(church_id, channel_id) |> Enum.take(count)
-    {:ok, videos}
-  end
+  #  def get_most_recent_videos(_, %{count: count, church_id: church_id, channel_id: channel_id}, _) do
+  #    videos = Videos.get_most_recent_videos(church_id, channel_id) |> Enum.take(count)
+  #    {:ok, videos}
+  #  end
 
   def get_all_playlists(_, %{channel_id: channel_id}, _) do
     playlists = Videos.get_all_playlists(channel_id)

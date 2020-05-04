@@ -34,13 +34,13 @@ defmodule ChurchWeb.Schema.Schema do
       resolve(&Resolvers.YoutubeResolver.search_videos/3)
     end
 
-    @doc "Get most recent videos"
-    field :most_recent, list_of(:latest_videos) do
-      arg(:count, non_null(:integer))
-      arg(:church_id, :id)
-      arg(:channel_id, :string)
-      resolve(&Resolvers.YoutubeResolver.get_most_recent_videos/3)
-    end
+    # @doc "Get most recent videos"
+    # field :most_recent, list_of(:latest_videos) do
+    #  arg(:count, non_null(:integer))
+    #  arg(:church_id, :id)
+    #  arg(:channel_id, :string)
+    #  resolve(&Resolvers.YoutubeResolver.get_most_recent_videos/3)
+    # end
 
     @doc "Get all playlists"
     field :playlists, list_of(:playlist) do

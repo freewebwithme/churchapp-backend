@@ -9,12 +9,35 @@ defmodule Church.Accounts do
   alias Church.Accounts.Church, as: ChurchStruct
   alias Church.Accounts.User
   alias Church.Utility
+  alias Church.Videos
 
-  def get_church_by_id(church_id),
-    do: Repo.get_by(ChurchStruct, id: church_id) |> Repo.preload(:latest_videos)
+  def get_church_by_id(church_id) do
+    church = Repo.get_by(ChurchStruct, id: church_id) |> Repo.preload(:latest_videos)
+    return_church_with_latest_videos(church)
+  end
 
-  def get_church_by_uuid(uuid),
-    do: Repo.get_by(ChurchStruct, uuid: uuid) |> Repo.preload(:latest_videos)
+  def get_church_by_uuid(uuid) do
+    church = Repo.get_by(ChurchStruct, uuid: uuid) |> Repo.preload(:latest_videos)
+    return_church_with_latest_videos(church)
+  end
+
+  @doc """
+  Check if church has latest videos.
+  if no latest videos, call youtube api to get latest videos.
+  """
+  def return_church_with_latest_videos(church) do
+    church =
+      case Enum.empty?(church.latest_videos) do
+        true ->
+          latest_videos = Videos.get_most_recent_videos(church)
+          Map.put(church, :latest_videos, latest_videos)
+
+        _ ->
+          church
+      end
+
+    church
+  end
 
   def create_church(attrs) do
     %{user_id: id} = attrs
