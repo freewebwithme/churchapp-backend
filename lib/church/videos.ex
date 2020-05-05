@@ -25,8 +25,9 @@ defmodule Church.Videos do
     Repo.insert_all(LatestVideos, videos, on_conflict: :nothing, returning: true)
   end
 
-  def delete_all_latest_videos() do
-    Repo.delete_all(from(v in LatestVideos))
+  def delete_all_latest_videos(church_id) do
+    query = from v in LatestVideos, where: v.church_id == ^church_id
+    Repo.delete_all(query)
   end
 
   @doc """
@@ -79,15 +80,16 @@ defmodule Church.Videos do
     with true <- Enum.empty?(church.latest_videos) do
       # There is no latest videos in database
       # Call API and save them to database
-      {:ok, response} = Youtube.search_videos(church.channel_id, "snippet", "", "date", 25, "")
-
-      {_rows, videos} =
-        build_videos_from_response(response, church.id) |> insert_all_latest_videos
-
-      videos
+      get_most_recent_videos_from_youtube(church)
     else
       false -> church.latest_videos
     end
+  end
+
+  def get_most_recent_videos_from_youtube(church) do
+    {:ok, response} = Youtube.search_videos(church.channel_id, "snippet", "", "date", 25, "")
+    {_rows, videos} = build_videos_from_response(response, church.id) |> insert_all_latest_videos
+    videos
   end
 
   def build_playlists(playlists) do

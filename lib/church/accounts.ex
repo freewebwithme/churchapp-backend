@@ -55,9 +55,21 @@ defmodule Church.Accounts do
     IO.inspect(church)
     IO.inspect(attrs)
 
-    church
-    |> ChurchStruct.changeset(attrs)
-    |> Repo.update()
+    changeset = ChurchStruct.changeset(church, attrs)
+
+    case changeset.changes["channel_id"] do
+      nil ->
+        # channel id is updated, call latest videos from youtube
+        {:ok, church} = Repo.update(changeset)
+        # delete old latest videos
+        Videos.delete_all_latest_videos(church.id)
+        latest_videos = Videos.get_most_recent_videos_from_youtube(church)
+        church = Map.put(church, :latest_videos, latest_videos)
+        {:ok, church}
+
+      _ ->
+        Repo.update(changeset)
+    end
   end
 
   def delete_church(%ChurchStruct{} = church) do

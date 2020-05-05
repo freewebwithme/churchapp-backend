@@ -90,6 +90,16 @@ defmodule ChurchWeb.Schema.Schema do
       resolve(&Resolvers.Accounts.create_church/3)
     end
 
+    @doc "Update church info"
+    field :update_church, :church do
+      arg(:church_id, non_null(:string))
+      arg(:name, non_null(:string))
+      arg(:channel_id, non_null(:string))
+      arg(:intro, non_null(:string))
+
+      resolve(&Resolvers.Accounts.update_church/3)
+    end
+
     @doc "Delete thumbnail image"
     field :delete_slide_image, :church do
       arg(:slider_number, :string)
@@ -116,6 +126,7 @@ defmodule ChurchWeb.Schema.Schema do
   end
 
   object :church do
+    field :id, :id
     field :name, :string
     field :intro, :string
     field :uuid, :string

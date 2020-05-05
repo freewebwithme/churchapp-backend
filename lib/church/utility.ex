@@ -21,7 +21,10 @@ defmodule Church.Utility do
     with true <- is_nil(video.snippet.thumbnails) do
       "https://churchapp-la.s3-us-west-1.amazonaws.com/no-thumbnail.png"
     else
-      false -> video.snippet.thumbnails.medium.url
+      false ->
+        IO.puts("Printing thumbnail info")
+        IO.inspect(video)
+        video.snippet.thumbnails.medium.url
     end
   end
 
