@@ -22,6 +22,14 @@ defmodule Church.Accounts do
   end
 
   @doc """
+  This function used for only get church
+  Used in YoutubeController.handle_upload_notification()
+  """
+  def get_church_by_channel_id(channel_id) do
+    Repo.get_by(ChurchStruct, channel_id: channel_id)
+  end
+
+  @doc """
   Check if church has latest videos.
   if no latest videos, call youtube api to get latest videos.
   """

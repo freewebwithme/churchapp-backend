@@ -21,7 +21,8 @@ defmodule ChurchWeb.Router do
   scope "/webhook", ChurchWeb do
     pipe_through(:api)
 
-    get "/youtube", YoutubeController, :index
+    get "/youtube", YoutubeController, :subscribe_confirm
+    post "/youtube", YoutubeController, :handle_upload_notification
   end
 
   scope "/slide-image", ChurchWeb do
