@@ -60,4 +60,15 @@ defmodule Church.Youtube do
       {:error, info} -> {:error, info}
     end
   end
+
+  def search_live_streraming(channel_id) do
+    {api_key, connection} = initialize_connection()
+
+    with {:ok, live_streaming} <-
+           YoutubeApi.search_live_streaming(connection, api_key, channel_id) do
+      {:ok, live_streaming}
+    else
+      {:error, info} -> {:error, info}
+    end
+  end
 end

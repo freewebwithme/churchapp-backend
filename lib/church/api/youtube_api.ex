@@ -62,4 +62,16 @@ defmodule Church.Api.YoutubeApi do
       pageToken: next_page_token
     )
   end
+
+  def search_live_streaming(connection, api_key, channel_id) do
+    Search.youtube_search_list(connection, "snippet",
+      key: api_key,
+      channelId: channel_id,
+      type: "video",
+      maxResults: 1,
+      order: "date",
+      q: "",
+      eventType: "live"
+    )
+  end
 end

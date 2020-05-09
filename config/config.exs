@@ -25,6 +25,8 @@ config :ex_aws,
   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role],
   region: {:system, "AWS_REGION"}
 
+config :stripity_stripe, api_key: fn -> System.get_env("STRIPE_SECRET") end
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

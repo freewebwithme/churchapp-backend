@@ -55,9 +55,10 @@ defmodule Church.MixProject do
       {:cors_plug, "~> 2.0"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~>2.0"},
-      {:hackney, "~> 1.9"},
+      {:hackney, "~> 1.15"},
       {:sweet_xml, "~>0.6"},
-      {:elixir_xml_to_map, "~> 1.0"}
+      {:elixir_xml_to_map, "~> 1.0"},
+      {:stripity_stripe, "~> 2.8", override: true}
     ]
   end
 
