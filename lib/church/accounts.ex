@@ -8,8 +8,11 @@ defmodule Church.Accounts do
 
   alias Church.Accounts.Church, as: ChurchStruct
   alias Church.Accounts.User
+  alias Church.Accounts.StripeUser
   alias Church.Utility
   alias Church.Videos
+
+  alias Church.Api.StripeApi
 
   def get_church_by_id(church_id) do
     church = Repo.get_by(ChurchStruct, id: church_id) |> Repo.preload(:latest_videos)
@@ -148,5 +151,17 @@ defmodule Church.Accounts do
     else
       _ -> :error
     end
+  end
+
+  def create_stripe_user(email, church_id) do
+    {:ok, stripe_user} = StripeApi.create_user(email)
+
+    %StripeUser{}
+    |> StripeUser.changeset(%{email: email, stripe_id: stripe_user.id, church_id: church_id})
+    |> Repo.insert()
+  end
+
+  def get_stripe_user(email, church_id) do
+    Repo.get_by(StripeUser, email: email, church_id: church_id)
   end
 end

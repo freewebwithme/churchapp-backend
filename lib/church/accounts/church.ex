@@ -2,6 +2,7 @@ defmodule Church.Accounts.Church do
   use Ecto.Schema
   import Ecto.Changeset
   alias Church.Videos.LatestVideos
+  alias Church.Accounts.StripeUser
 
   schema "churches" do
     field :name, :string
@@ -14,6 +15,8 @@ defmodule Church.Accounts.Church do
 
     belongs_to :user, Church.Accounts.User
     has_many :latest_videos, LatestVideos
+    has_many :stripe_users, StripeUser
+
     timestamps()
   end
 

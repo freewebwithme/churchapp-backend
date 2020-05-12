@@ -57,6 +57,16 @@ defmodule ChurchWeb.Schema.Schema do
   end
 
   mutation do
+    @doc "Make a payment using payment id from client"
+    field :make_offering, :payment_intent do
+      arg(:payment_method_id, :string)
+      arg(:email, :string)
+      arg(:amount, :string)
+      arg(:church_id, :string)
+
+      resolve(&Resolvers.StripeResolver.make_offering/3)
+    end
+
     @doc "user sign up"
     field :sign_up, :session do
       arg(:email, :string)
@@ -220,5 +230,12 @@ defmodule ChurchWeb.Schema.Schema do
     field :playlist_title, :string
     field :description, :string
     field :thumbnail_url, :string
+  end
+
+  object :payment_intent do
+    field :id, :string
+    field :amount_received, :string
+    field :receipt_url, :string
+    field :status, :string
   end
 end
