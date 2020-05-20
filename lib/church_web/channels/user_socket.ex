@@ -2,7 +2,7 @@ defmodule ChurchWeb.UserSocket do
   use Phoenix.Socket
 
   use Absinthe.Phoenix.Socket,
-    shema: ChurchWeb.Schema.Schema
+    shema: ChurchWeb.Schema
 
   ## Channels
   # channel "room:*", ChurchWeb.RoomChannel

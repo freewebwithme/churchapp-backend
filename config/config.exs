@@ -17,7 +17,7 @@ config :church, ChurchWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: ChurchWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Church.PubSub, adapter: Phoenix.PubSub.PG2],
+  pubsub_server: Church.PubSub,
   live_view: [signing_salt: System.get_env("LIVE_VIEW_SIGNING_SALT")]
 
 config :ex_aws,

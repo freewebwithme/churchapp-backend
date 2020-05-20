@@ -2,20 +2,23 @@ defmodule Church.Accounts.Church do
   use Ecto.Schema
   import Ecto.Changeset
   alias Church.Videos.LatestVideos
-  alias Church.Accounts.StripeUser
+  alias Church.Accounts.{StripeUser, Employee, Schedule}
 
   schema "churches" do
     field :name, :string
     field :intro, :string
     field :uuid, :string
     field :channel_id, :string
-    field :slide_image_one, :string
-    field :slide_image_two, :string
-    field :slide_image_three, :string
+    field :address_line_one, :string
+    field :address_line_two, :string
+    field :phone_number, :string
+    field :email, :string
 
+    embeds_many :schedules, Schedule
     belongs_to :user, Church.Accounts.User
     has_many :latest_videos, LatestVideos
     has_many :stripe_users, StripeUser
+    has_many :employees, Employee
 
     timestamps()
   end
@@ -28,9 +31,10 @@ defmodule Church.Accounts.Church do
       :intro,
       :uuid,
       :channel_id,
-      :slide_image_one,
-      :slide_image_two,
-      :slide_image_three
+      :address_line_one,
+      :address_line_two,
+      :phone_number,
+      :email
     ])
     |> validate_required([:name, :intro, :uuid, :channel_id])
     |> unique_constraint(:channel_id)

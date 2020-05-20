@@ -8,13 +8,16 @@ defmodule Church.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Church.PubSub},
       # Start the Ecto repository
       Church.Repo,
       # Start the endpoint when the application starts
       ChurchWeb.Endpoint,
       # Starts a worker by calling: Church.Worker.start_link(arg)
       # {Church.Worker, arg},
-      {Absinthe.Subscription, [ChurchWeb.Endpoint]}
+
+      {Absinthe.Subscription, ChurchWeb.Endpoint}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

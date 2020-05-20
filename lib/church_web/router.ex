@@ -10,10 +10,10 @@ defmodule ChurchWeb.Router do
   scope "/" do
     pipe_through(:api)
 
-    forward("/api", Absinthe.Plug, schema: ChurchWeb.Schema.Schema)
+    forward("/api", Absinthe.Plug, schema: ChurchWeb.Schema)
 
     forward("/graphiql", Absinthe.Plug.GraphiQL,
-      schema: ChurchWeb.Schema.Schema,
+      schema: ChurchWeb.Schema,
       socket: ChurchWeb.UserSocket
     )
   end

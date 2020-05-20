@@ -33,6 +33,8 @@ defmodule ChurchWeb.Resolvers.Accounts do
 
   def get_church(_, %{uuid: uuid}, _) do
     church = Accounts.get_church_by_uuid(uuid)
+    IO.puts("Printing church")
+    IO.inspect(church)
     {:ok, church}
   end
 

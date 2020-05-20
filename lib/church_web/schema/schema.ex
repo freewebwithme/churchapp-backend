@@ -1,8 +1,7 @@
-defmodule ChurchWeb.Schema.Schema do
+defmodule ChurchWeb.Schema do
   use Absinthe.Schema
   alias ChurchWeb.Resolvers
   alias ChurchWeb.Schema.Middleware
-  alias Church.Utility
 
   def middleware(middleware, _field, %{identifier: :mutation}) do
     middleware ++ [Middleware.ChangesetErrors]
@@ -33,14 +32,6 @@ defmodule ChurchWeb.Schema.Schema do
       arg(:next_page_token, :string)
       resolve(&Resolvers.YoutubeResolver.search_videos/3)
     end
-
-    # @doc "Get most recent videos"
-    # field :most_recent, list_of(:latest_videos) do
-    #  arg(:count, non_null(:integer))
-    #  arg(:church_id, :id)
-    #  arg(:channel_id, :string)
-    #  resolve(&Resolvers.YoutubeResolver.get_most_recent_videos/3)
-    # end
 
     @doc "Get all playlists"
     field :playlists, list_of(:playlist) do
@@ -96,6 +87,10 @@ defmodule ChurchWeb.Schema.Schema do
       arg(:channel_id, non_null(:string))
       arg(:intro, non_null(:string))
       arg(:user_id, non_null(:string))
+      arg(:address_line_one, :string)
+      arg(:address_line_two, :string)
+      arg(:phone_number, :string)
+      arg(:email, :string)
 
       resolve(&Resolvers.Accounts.create_church/3)
     end
@@ -106,16 +101,12 @@ defmodule ChurchWeb.Schema.Schema do
       arg(:name, non_null(:string))
       arg(:channel_id, non_null(:string))
       arg(:intro, non_null(:string))
+      arg(:address_line_one, :string)
+      arg(:address_line_two, :string)
+      arg(:phone_number, :string)
+      arg(:email, :string)
 
       resolve(&Resolvers.Accounts.update_church/3)
-    end
-
-    @doc "Delete thumbnail image"
-    field :delete_slide_image, :church do
-      arg(:slider_number, :string)
-      arg(:user_id, :string)
-
-      resolve(&Resolvers.Accounts.delete_slide_image/3)
     end
   end
 
@@ -142,53 +133,26 @@ defmodule ChurchWeb.Schema.Schema do
     field :uuid, :string
     field :channel_id, :string
 
-    field :slide_image_one, :string do
-      resolve(fn parent, _, _ ->
-        image = Map.get(parent, :slide_image_one)
-
-        case is_nil(image) do
-          false ->
-            image_url = Utility.build_image_url(image)
-            {:ok, image_url}
-
-          _ ->
-            {:ok, nil}
-        end
-      end)
-    end
-
-    field :slide_image_two, :string do
-      resolve(fn parent, _, _ ->
-        image = Map.get(parent, :slide_image_two)
-
-        case is_nil(image) do
-          false ->
-            image_url = Utility.build_image_url(image)
-            {:ok, image_url}
-
-          _ ->
-            {:ok, nil}
-        end
-      end)
-    end
-
-    field :slide_image_three, :string do
-      resolve(fn parent, _, _ ->
-        image = Map.get(parent, :slide_image_three)
-
-        case is_nil(image) do
-          false ->
-            image_url = Utility.build_image_url(image)
-            {:ok, image_url}
-
-          _ ->
-            {:ok, nil}
-        end
-      end)
-    end
+    field :address_line_one, :string
+    field :address_line_two, :string
+    field :phone_number, :string
+    field :email, :string
+    field :schedules, list_of(:schedule)
 
     field :user, :user
     field :latest_videos, list_of(:latest_videos)
+    field :employees, list_of(:employee)
+  end
+
+  object :schedule do
+    field :service_name, :string
+    field :service_time, :string
+  end
+
+  object :employee do
+    field :name, :string
+    field :position, :string
+    field :profile_image, :string
   end
 
   object :video_search_response do
