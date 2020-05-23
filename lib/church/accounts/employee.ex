@@ -6,6 +6,7 @@ defmodule Church.Accounts.Employee do
     field :name, :string
     field :position, :string
     field :profile_image, :string
+    field :order, :integer
 
     belongs_to :church, Church.Accounts.Church
   end
@@ -13,7 +14,7 @@ defmodule Church.Accounts.Employee do
   @doc false
   def changeset(employee, attrs) do
     employee
-    |> cast(attrs, [:name, :position, :profile_image])
+    |> cast(attrs, [:name, :position, :profile_image, :order, :church_id])
     |> validate_required([:name, :position])
   end
 end

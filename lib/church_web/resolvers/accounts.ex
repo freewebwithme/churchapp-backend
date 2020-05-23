@@ -33,8 +33,6 @@ defmodule ChurchWeb.Resolvers.Accounts do
 
   def get_church(_, %{uuid: uuid}, _) do
     church = Accounts.get_church_by_uuid(uuid)
-    IO.puts("Printing church")
-    IO.inspect(church)
     {:ok, church}
   end
 
@@ -46,6 +44,18 @@ defmodule ChurchWeb.Resolvers.Accounts do
 
   def update_service_info(_, %{church_id: church_id, schedules: schedules}, _) do
     Accounts.update_service_info(church_id, schedules)
+  end
+
+  def create_employee(_, arg, _) do
+    Accounts.create_employee(arg)
+  end
+
+  def update_employee(_, arg, _) do
+    Accounts.update_employee(arg)
+  end
+
+  def delete_employee(_, arg, _) do
+    Accounts.delete_employee(arg)
   end
 
   def delete_slide_image(_, %{slider_number: slider_number, user_id: user_id}, _) do

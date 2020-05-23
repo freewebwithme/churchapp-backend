@@ -77,12 +77,30 @@ defmodule Church.Videos do
   If has videos, return them
   """
   def get_most_recent_videos(church) do
-    with true <- Enum.empty?(church.latest_videos) do
+    with false <- Ecto.assoc_loaded?(church.latest_videos) do
+      # LatestVideos is not loaded with church
+      # So get a church with latest videos
+      church = Repo.get_by(Church.Accounts.Church, id: church.id) |> Repo.preload(:latest_videos)
+
+      case Enum.empty?(church.latest_videos) do
+        true ->
+          get_most_recent_videos_from_youtube(church)
+
+        _ ->
+          church.latest_videos
+      end
+
       # There is no latest videos in database
       # Call API and save them to database
-      get_most_recent_videos_from_youtube(church)
     else
-      false -> church.latest_videos
+      _ ->
+        case Enum.empty?(church.latest_videos) do
+          true ->
+            get_most_recent_videos_from_youtube(church)
+
+          _ ->
+            church.latest_videos
+        end
     end
   end
 

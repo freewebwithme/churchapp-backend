@@ -7,23 +7,23 @@ defmodule Church.Accounts do
   alias Church.Repo
 
   alias Church.Accounts.Church, as: ChurchStruct
-  alias Church.Accounts.User
-  alias Church.Accounts.StripeUser
+  alias Church.Accounts.{User, StripeUser, Employee}
   alias Church.Utility
   alias Church.Videos
 
   alias Church.Api.StripeApi
 
   def get_church_by_id(church_id) do
-    church =
-      Repo.get_by(ChurchStruct, id: church_id) |> Repo.preload([:latest_videos, :employees])
+    church = Repo.get_by(ChurchStruct, id: church_id)
 
     return_church_with_latest_videos(church)
   end
 
   def get_church_by_uuid(uuid) do
-    church = Repo.get_by(ChurchStruct, uuid: uuid) |> Repo.preload([:latest_videos, :employees])
-    return_church_with_latest_videos(church)
+    # |> Repo.preload([:latest_videos])
+    church = Repo.get_by(ChurchStruct, uuid: uuid)
+    church
+    # return_church_with_latest_videos(church)
   end
 
   @doc """
@@ -64,10 +64,6 @@ defmodule Church.Accounts do
   end
 
   def update_church(%ChurchStruct{} = church, attrs) do
-    IO.puts("Calling update_church")
-    IO.inspect(church)
-    IO.inspect(attrs)
-
     changeset = ChurchStruct.changeset(church, attrs)
 
     case changeset.changes["channel_id"] do
@@ -91,9 +87,6 @@ defmodule Church.Accounts do
 
     {:ok, schedule_map} = Jason.decode(schedules)
 
-    IO.puts("Printing map")
-    IO.inspect(schedule_map)
-
     # Build Schedule struct
     final_schedules =
       Enum.map(schedule_map, fn {k, v} ->
@@ -104,15 +97,69 @@ defmodule Church.Accounts do
         }
       end)
 
-    IO.puts("Printing final map")
-    IO.inspect(final_schedules)
-
     church_changeset = Ecto.Changeset.put_embed(church_changeset, :schedules, final_schedules)
     Repo.update(church_changeset)
   end
 
+  def create_employee(attrs) do
+    %{profile_image: profile_image} = attrs
+    # Add default profile image
+    attrs =
+      with true <- is_nil(profile_image),
+           0 <- String.length(profile_image) do
+        Map.put(
+          attrs,
+          :profile_image,
+          "https://churchapp-la.s3-us-west-1.amazonaws.com/no-thumbnail.png"
+        )
+      else
+        _ ->
+          attrs
+      end
+
+    %Employee{}
+    |> Employee.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_employee(attrs) do
+    %{id: employee_id, church_id: church_id} = attrs
+    employee = Repo.get_by(Employee, id: employee_id)
+    {church_id, ""} = Integer.parse(church_id)
+
+    IO.puts("Comparing church id")
+    IO.inspect(employee.church_id)
+    IO.inspect(church_id)
+
+    with true <- employee.church_id == church_id do
+      employee
+      |> Employee.changeset(attrs)
+      |> Repo.update()
+    else
+      false ->
+        {:error, "정보를 수정할 수가 없습니다."}
+    end
+  end
+
+  def delete_employee(attrs) do
+    %{id: employee_id, church_id: church_id} = attrs
+    employee = Repo.get_by(Employee, id: employee_id)
+    {church_id, ""} = Integer.parse(church_id)
+
+    with true <- employee.church_id == church_id do
+      Repo.delete(employee)
+    else
+      false ->
+        {:error, "정보를 수정할 수가 없습니다."}
+    end
+  end
+
   def delete_church(%ChurchStruct{} = church) do
     Repo.delete(church)
+  end
+
+  def change_church(%ChurchStruct{} = church) do
+    ChurchStruct.changeset(church, %{})
   end
 
   def delete_slide_image(user_id, slider_number) do
@@ -126,8 +173,6 @@ defmodule Church.Accounts do
         case is_nil(image_key_name) do
           false ->
             result = Utility.delete_file_from_s3(bucket_name, image_key_name)
-            IO.puts("Printing from delete s3 image")
-            IO.inspect(result)
             update_church(user.church, %{slide_image_two: nil})
 
           _ ->
@@ -148,10 +193,6 @@ defmodule Church.Accounts do
     end
   end
 
-  def change_church(%ChurchStruct{} = church) do
-    ChurchStruct.changeset(church, %{})
-  end
-
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
@@ -170,8 +211,6 @@ defmodule Church.Accounts do
 
   def authenticate_user(email, password) do
     user = Repo.get_by(User, email: email) |> Repo.preload(:church)
-    IO.puts("Printing User")
-    IO.inspect(user)
 
     with %{password: hashed_password} when not is_nil(hashed_password) <- user,
          true <- Comeonin.Ecto.Password.valid?(password, hashed_password) do
@@ -191,5 +230,13 @@ defmodule Church.Accounts do
 
   def get_stripe_user(email, church_id) do
     Repo.get_by(StripeUser, email: email, church_id: church_id)
+  end
+
+  def data() do
+    Dataloader.Ecto.new(Church.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
   end
 end
