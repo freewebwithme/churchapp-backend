@@ -15,12 +15,14 @@ defmodule Church.Accounts do
   alias Church.Api.StripeApi
 
   def get_church_by_id(church_id) do
-    church = Repo.get_by(ChurchStruct, id: church_id) |> Repo.preload(:latest_videos)
+    church =
+      Repo.get_by(ChurchStruct, id: church_id) |> Repo.preload([:latest_videos, :employees])
+
     return_church_with_latest_videos(church)
   end
 
   def get_church_by_uuid(uuid) do
-    church = Repo.get_by(ChurchStruct, uuid: uuid) |> Repo.preload(:latest_videos)
+    church = Repo.get_by(ChurchStruct, uuid: uuid) |> Repo.preload([:latest_videos, :employees])
     return_church_with_latest_videos(church)
   end
 
@@ -81,6 +83,32 @@ defmodule Church.Accounts do
       _ ->
         Repo.update(changeset)
     end
+  end
+
+  def update_service_info(church_id, schedules) do
+    church = get_church_by_id(church_id)
+    church_changeset = Ecto.Changeset.change(church)
+
+    {:ok, schedule_map} = Jason.decode(schedules)
+
+    IO.puts("Printing map")
+    IO.inspect(schedule_map)
+
+    # Build Schedule struct
+    final_schedules =
+      Enum.map(schedule_map, fn {k, v} ->
+        %Church.Accounts.Schedule{
+          service_name: k,
+          service_time: List.first(v),
+          order: List.last(v)
+        }
+      end)
+
+    IO.puts("Printing final map")
+    IO.inspect(final_schedules)
+
+    church_changeset = Ecto.Changeset.put_embed(church_changeset, :schedules, final_schedules)
+    Repo.update(church_changeset)
   end
 
   def delete_church(%ChurchStruct{} = church) do

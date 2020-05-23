@@ -44,6 +44,10 @@ defmodule ChurchWeb.Resolvers.Accounts do
     Accounts.update_church(church, args)
   end
 
+  def update_service_info(_, %{church_id: church_id, schedules: schedules}, _) do
+    Accounts.update_service_info(church_id, schedules)
+  end
+
   def delete_slide_image(_, %{slider_number: slider_number, user_id: user_id}, _) do
     Accounts.delete_slide_image(user_id, slider_number)
   end

@@ -108,6 +108,14 @@ defmodule ChurchWeb.Schema do
 
       resolve(&Resolvers.Accounts.update_church/3)
     end
+
+    @doc "Update service info"
+    field :update_service_info, :church do
+      arg(:church_id, non_null(:string))
+      arg(:schedules, :string)
+
+      resolve(&Resolvers.Accounts.update_service_info/3)
+    end
   end
 
   object :session do
@@ -147,6 +155,7 @@ defmodule ChurchWeb.Schema do
   object :schedule do
     field :service_name, :string
     field :service_time, :string
+    field :order, :integer
   end
 
   object :employee do

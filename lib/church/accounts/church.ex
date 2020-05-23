@@ -14,7 +14,7 @@ defmodule Church.Accounts.Church do
     field :phone_number, :string
     field :email, :string
 
-    embeds_many :schedules, Schedule
+    embeds_many :schedules, Schedule, on_replace: :delete
     belongs_to :user, Church.Accounts.User
     has_many :latest_videos, LatestVideos
     has_many :stripe_users, StripeUser
